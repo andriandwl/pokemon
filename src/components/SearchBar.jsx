@@ -1,5 +1,6 @@
 import Link from "next/link";
 import React from "react";
+import Navigation from "./Navigation";
 
 function SearchBar({ keyword, keywordChange }) {
   return (
