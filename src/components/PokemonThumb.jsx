@@ -9,7 +9,7 @@ const PokemonThumb = ({ id, image, name, type, _callback }) => {
       <div className={style}>
         <div className="card p-3 mb-2">
           <Link
-            href={`/detailPoke/${id}`}
+            href={`/pokemon/${id}`}
             style={{ textDecoration: "none", color: "black" }}
           >
             <div className="d-flex justify-content-between">
