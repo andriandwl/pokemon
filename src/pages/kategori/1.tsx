@@ -1,23 +1,39 @@
 import React, { useEffect, useState } from "react";
-import PokemonThumb from "./PokemonThumb";
-import SearchBar from "./SearchBar";
 import { useSearchParams } from "next/navigation";
-import Navigation from "./Navigation";
+import SearchBar from "@/components/SearchBar";
+import PokemonThumb from "@/components/PokemonThumb";
+import Navigation from "@/components/Navigation";
 
-export default function Main() {
-  const [allPokemons, setAllPokemons] = useState([]);
+interface Pokemon {
+  id: number;
+  name: string;
+  sprites: {
+    other: {
+      dream_world: {
+        front_default: string;
+      };
+    };
+  };
+  types: {
+    type: {
+      name: string;
+    };
+  }[];
+}
+
+const Kategori1: React.FC = () => {
+  const [allPokemons, setAllPokemons] = useState<Pokemon[]>([]);
   const [loadMore, setLoadMore] = useState(
     "https://pokeapi.co/api/v2/pokemon?limit=20"
   );
-
   const searchParams = useSearchParams();
   const keyword = searchParams.get("keyword");
 
-  // function changeSearchParams(keyword) {
-  //   setSearchParams({ keyword });
-  // }
+  function changeSearchParams(keyword: string) {
+    // setSearchParams({ keyword });
+  }
 
-  const [search, setSearch] = React.useState(keyword || "");
+  const [search, setSearch] = React.useState<string>(keyword || "");
 
   const getAllPokemons = async () => {
     const res = await fetch(loadMore);
@@ -25,23 +41,26 @@ export default function Main() {
 
     setLoadMore(data.next);
 
-    function createPokemonObject(results) {
-      results.forEach(async (pokemon) => {
+    async function createPokemonObject(results: any[]) {
+      for (const pokemon of results) {
         const res = await fetch(
           `https://pokeapi.co/api/v2/pokemon/${pokemon.name}`
         );
         const data = await res.json();
         setAllPokemons((currentList) => [...currentList, data]);
-        allPokemons.sort((a, b) => a.id - b.id);
-        // console.log(allPokemons);
-      });
+      }
+
+      setAllPokemons((currentList) =>
+        [...currentList].sort((a, b) => a.id - b.id)
+      );
     }
+
     createPokemonObject(data.results);
   };
 
-  const onKeywordChangeHandler = (search) => {
+  const onKeywordChangeHandler = (search: string) => {
     setSearch(search);
-    // changeSearchParams(search);
+    changeSearchParams(search);
   };
 
   useEffect(() => {
@@ -49,11 +68,8 @@ export default function Main() {
   }, []);
 
   const filterPoke = React.useMemo(
-    () =>
-      allPokemons?.filter((poke) => {
-        return poke.name.toLowerCase().includes(search.toLowerCase());
-      }),
-    [allPokemons, search]
+    () => allPokemons?.filter((poke) => poke.types[0].type.name === "water"),
+    [allPokemons]
   );
 
   return (
@@ -80,4 +96,6 @@ export default function Main() {
       </div>
     </div>
   );
-}
+};
+
+export default Kategori1;

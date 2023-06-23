@@ -1,8 +1,12 @@
-import Link from "next/link";
 import React from "react";
-import Navigation from "./Navigation";
+import Link from "next/link";
 
-function SearchBar({ keyword, keywordChange }) {
+interface SearchBarProps {
+  keyword: string;
+  keywordChange: (keyword: string) => void;
+}
+
+const SearchBar: React.FC<SearchBarProps> = ({ keyword, keywordChange }) => {
   return (
     <div className="container">
       <div className="input-group mb-3">
@@ -34,28 +38,28 @@ function SearchBar({ keyword, keywordChange }) {
           </button>
           <ul className="dropdown-menu">
             <li>
-              <Link className="dropdown-item" href="/kategori/">
-                Semua Kategori
+              <Link href="/">
+                <p className="dropdown-item">Semua Kategori</p>
               </Link>
             </li>
             <li>
-              <Link className="dropdown-item" href="/kategori/1">
-                Water
+              <Link href="/kategori/1">
+                <p className="dropdown-item">Water</p>
               </Link>
             </li>
             <li>
-              <Link className="dropdown-item" href="/kategori/2">
-                Fire
+              <Link href="/kategori/2">
+                <p className="dropdown-item">Fire</p>
               </Link>
             </li>
             <li>
-              <Link className="dropdown-item" href="/kategori/3">
-                Grass
+              <Link href="/kategori/3">
+                <p className="dropdown-item">Grass</p>
               </Link>
             </li>
             <li>
-              <Link className="dropdown-item" href="/kategori/4">
-                Bug
+              <Link href="/kategori/4">
+                <p className="dropdown-item">Bug</p>
               </Link>
             </li>
           </ul>
@@ -63,6 +67,6 @@ function SearchBar({ keyword, keywordChange }) {
       </div>
     </div>
   );
-}
+};
 
 export default SearchBar;

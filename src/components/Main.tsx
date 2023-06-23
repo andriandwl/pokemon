@@ -1,14 +1,32 @@
 import React, { useEffect, useState } from "react";
+import Navigation from "./Navigation";
 import { useSearchParams } from "next/navigation";
-import SearchBar from "@/components/SearchBar";
-import PokemonThumb from "@/components/PokemonThumb";
-import Navigation from "@/components/Navigation";
+import PokemonThumb from "./PokemonThumb";
+import SearchBar from "./SearchBar";
 
-function Kategori3() {
-  const [allPokemons, setAllPokemons] = useState([]);
-  const [loadMore, setLoadMore] = useState(
+interface Pokemon {
+  id: number;
+  sprites: {
+    other: {
+      dream_world: {
+        front_default: string;
+      };
+    };
+  };
+  name: string;
+  types: {
+    type: {
+      name: string;
+    };
+  }[];
+}
+
+export default function Main() {
+  const [allPokemons, setAllPokemons] = useState<Pokemon[]>([]);
+  const [loadMore, setLoadMore] = useState<string>(
     "https://pokeapi.co/api/v2/pokemon?limit=20"
   );
+
   const searchParams = useSearchParams();
   const keyword = searchParams.get("keyword");
 
@@ -24,7 +42,7 @@ function Kategori3() {
 
     setLoadMore(data.next);
 
-    function createPokemonObject(results) {
+    function createPokemonObject(results: any[]) {
       results.forEach(async (pokemon) => {
         const res = await fetch(
           `https://pokeapi.co/api/v2/pokemon/${pokemon.name}`
@@ -37,21 +55,25 @@ function Kategori3() {
     createPokemonObject(data.results);
   };
 
-  const onKeywordChangeHandler = (search) => {
+  const onKeywordChangeHandler = (search: string) => {
     setSearch(search);
     // changeSearchParams(search);
   };
+
   useEffect(() => {
     getAllPokemons();
   }, []);
 
   const filterPoke = React.useMemo(
-    () => allPokemons?.filter((poke) => poke.types[0].type.name === "grass"),
-    [allPokemons]
+    () =>
+      allPokemons?.filter((poke) => {
+        return poke.name.toLowerCase().includes(search.toLowerCase());
+      }),
+    [allPokemons, search]
   );
+
   return (
     <div className="app-contaner">
-      <Navigation />
       <div className="pokemon-container">
         <SearchBar keyword={search} keywordChange={onKeywordChangeHandler} />
         <div className="all-container gap-2">
@@ -74,5 +96,3 @@ function Kategori3() {
     </div>
   );
 }
-
-export default Kategori3;

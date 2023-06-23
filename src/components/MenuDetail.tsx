@@ -2,7 +2,15 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-export default function MenuDetail({ pokemon }) {
+interface Pokemon {
+  name: string;
+}
+
+interface MenuDetailProps {
+  pokemon: Pokemon;
+}
+
+const MenuDetail: React.FC<MenuDetailProps> = ({ pokemon }) => {
   return (
     <div className="row mb-2">
       <div className="col-md-6">
@@ -10,22 +18,14 @@ export default function MenuDetail({ pokemon }) {
           <div className="col p-4 d-flex flex-column position-static">
             <strong className="d-inline-block mb-2 text-success">Design</strong>
             <h3 className="mb-0">{pokemon.name}</h3>
-            <div className="mb-1 text-muted">Height :{pokemon.height}</div>
+
             <p className="mb-auto">
               This is a wider card with supporting text below as a natural
               lead-in to additional content.
             </p>
-            <Link href="/" className="stretched-link">
-              Continue reading
+            <Link href="/" passHref>
+              <p className="stretched-link">Continue reading</p>
             </Link>
-          </div>
-          <div className="col-auto d-none d-lg-block">
-            <Image
-              src={pokemon.sprites?.front_default}
-              width={300}
-              height={300}
-              alt="caurra"
-            />
           </div>
         </div>
       </div>
@@ -34,25 +34,19 @@ export default function MenuDetail({ pokemon }) {
           <div className="col p-4 d-flex flex-column position-static">
             <strong className="d-inline-block mb-2 text-success">Design</strong>
             <h3 className="mb-0">{pokemon.name}</h3>
-            <div className="mb-1 text-muted">Height :{pokemon.height}</div>
+
             <p className="mb-auto">
               This is a wider card with supporting text below as a natural
               lead-in to additional content.
             </p>
-            <Link href="/" className="stretched-link">
-              Continue reading
+            <Link href="/" passHref>
+              <p className="stretched-link">Continue reading</p>
             </Link>
-          </div>
-          <div className="col-auto d-none d-lg-block">
-            <Image
-              src={pokemon.sprites?.front_default}
-              width={300}
-              height={300}
-              alt="caurra"
-            />
           </div>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default MenuDetail;

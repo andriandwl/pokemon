@@ -1,22 +1,39 @@
-import React, { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
-import SearchBar from "@/components/SearchBar";
-import PokemonThumb from "@/components/PokemonThumb";
 import Navigation from "@/components/Navigation";
+import PokemonThumb from "@/components/PokemonThumb";
+import SearchBar from "@/components/SearchBar";
+import { useSearchParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
-function Kategori1() {
-  const [allPokemons, setAllPokemons] = useState([]);
+interface Pokemon {
+  id: number;
+  name: string;
+  sprites: {
+    other: {
+      dream_world: {
+        front_default: string;
+      };
+    };
+  };
+  types: {
+    type: {
+      name: string;
+    };
+  }[];
+}
+
+const Kategori3: React.FC = () => {
+  const [allPokemons, setAllPokemons] = useState<Pokemon[]>([]);
   const [loadMore, setLoadMore] = useState(
     "https://pokeapi.co/api/v2/pokemon?limit=20"
   );
   const searchParams = useSearchParams();
   const keyword = searchParams.get("keyword");
 
-  // function changeSearchParams(keyword) {
-  //   setSearchParams({ keyword });
-  // }
+  function changeSearchParams(keyword: string) {
+    // setSearchParams({ keyword });
+  }
 
-  const [search, setSearch] = React.useState(keyword || "");
+  const [search, setSearch] = React.useState<string>(keyword || "");
 
   const getAllPokemons = async () => {
     const res = await fetch(loadMore);
@@ -24,31 +41,37 @@ function Kategori1() {
 
     setLoadMore(data.next);
 
-    function createPokemonObject(results) {
-      results.forEach(async (pokemon) => {
+    async function createPokemonObject(results: any[]) {
+      for (const pokemon of results) {
         const res = await fetch(
           `https://pokeapi.co/api/v2/pokemon/${pokemon.name}`
         );
         const data = await res.json();
         setAllPokemons((currentList) => [...currentList, data]);
-        allPokemons.sort((a, b) => a.id - b.id);
-      });
+      }
+
+      setAllPokemons((currentList) =>
+        [...currentList].sort((a, b) => a.id - b.id)
+      );
     }
+
     createPokemonObject(data.results);
   };
 
-  const onKeywordChangeHandler = (search) => {
+  const onKeywordChangeHandler = (search: string) => {
     setSearch(search);
-    // changeSearchParams(search);
+    changeSearchParams(search);
   };
+
   useEffect(() => {
     getAllPokemons();
   }, []);
 
   const filterPoke = React.useMemo(
-    () => allPokemons?.filter((poke) => poke.types[0].type.name === "water"),
+    () => allPokemons?.filter((poke) => poke.types[0].type.name === "grass"),
     [allPokemons]
   );
+
   return (
     <div className="app-contaner">
       <Navigation />
@@ -73,6 +96,6 @@ function Kategori1() {
       </div>
     </div>
   );
-}
+};
 
-export default Kategori1;
+export default Kategori3;

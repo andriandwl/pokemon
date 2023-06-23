@@ -2,8 +2,21 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 
-const PokemonThumb = ({ id, image, name, type, _callback }) => {
+interface PokemonThumbProps {
+  id: number;
+  image: string;
+  name: string;
+  type: string;
+}
+
+const PokemonThumb: React.FC<PokemonThumbProps> = ({
+  id,
+  image,
+  name,
+  type,
+}) => {
   const style = type + " thumb-container";
+
   return (
     <div className="col-lg-3">
       <div className={style}>
@@ -33,14 +46,6 @@ const PokemonThumb = ({ id, image, name, type, _callback }) => {
           </Link>
         </div>
       </div>
-      {/* <img src={image} alt={name} />
-      <div classNameName="detail-wrapper">
-        <h3>{name}</h3>
-        <div classNameName="number">
-          <small>{id}</small>
-        </div>
-        <small>Type: {type}</small>
-      </div> */}
     </div>
   );
 };
