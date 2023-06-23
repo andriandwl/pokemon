@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import Navigation from "./Navigation";
 import { useSearchParams } from "next/navigation";
 import PokemonThumb from "./PokemonThumb";
@@ -30,38 +30,37 @@ export default function Main() {
   const searchParams = useSearchParams();
   const keyword = searchParams.get("keyword");
 
-  // function changeSearchParams(keyword) {
-  //   setSearchParams({ keyword });
-  // }
+  const [search, setSearch] = useState(keyword || "");
 
-  const [search, setSearch] = React.useState(keyword || "");
-
-  const getAllPokemons = async () => {
+  const getAllPokemons = useCallback(async () => {
     const res = await fetch(loadMore);
     const data = await res.json();
 
     setLoadMore(data.next);
 
-    function createPokemonObject(results: any[]) {
-      results.forEach(async (pokemon) => {
+    async function createPokemonObject(results: any[]) {
+      const pokemonPromises = results.map(async (pokemon) => {
         const res = await fetch(
           `https://pokeapi.co/api/v2/pokemon/${pokemon.name}`
         );
         const data = await res.json();
-        setAllPokemons((currentList) => [...currentList, data]);
-        allPokemons.sort((a, b) => a.id - b.id);
+        return data;
       });
+      const pokemonData = await Promise.all(pokemonPromises);
+      setAllPokemons((currentList) => [...currentList, ...pokemonData]);
     }
+
     createPokemonObject(data.results);
-  };
+  }, [loadMore]);
 
   const onKeywordChangeHandler = (search: string) => {
     setSearch(search);
-    // changeSearchParams(search);
   };
 
+  const getAllPokemonRef = useRef(getAllPokemons);
+
   useEffect(() => {
-    getAllPokemons();
+    getAllPokemonRef.current();
   }, []);
 
   const filterPoke = React.useMemo(
@@ -74,6 +73,7 @@ export default function Main() {
 
   return (
     <div className="app-contaner">
+      <Navigation />
       <div className="pokemon-container">
         <SearchBar keyword={search} keywordChange={onKeywordChangeHandler} />
         <div className="all-container gap-2">
